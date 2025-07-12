@@ -45,7 +45,7 @@ class CrudRepository {
             const response = await this.model.findAll();
             return response;
         } catch(error) {
-            Logger.error('Something went wrong in the Crud Repo: get');
+            Logger.error('Something went wrong in the Crud Repo: getAll');
             throw error;
         }
     }
@@ -59,10 +59,26 @@ class CrudRepository {
             })
             return response;
         } catch(error) {
-            Logger.error('Something went wrong in the Crud Repo: get');
+            Logger.error('Something went wrong in the Crud Repo: update');
             throw error;
         }
     }
+
+    async getByEmail(data) {
+        try {
+            const response = await this.model.findOne({
+                where: {
+                    email: data
+                }
+            });
+            return response;
+        } catch(error) {
+            Logger.error('Somthing went wrong in Crud Repo: findOne');
+            throw error;
+        }
+    }
+
+
 }
 
 

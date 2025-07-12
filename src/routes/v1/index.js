@@ -1,12 +1,13 @@
 const express = require('express');
-const { MeetingRoomController } = require('../../controllers')
 
-const locationRoutes = require('./location-routes')
+const locationRoutes = require('./location-routes');
+const authRoutes = require('./auth-routes');
 
 const router = express.Router();
 
 router.use('/locations', locationRoutes);
 
-router.get('/info', MeetingRoomController.info);
+router.use('/auth', authRoutes);
+
 
 module.exports = router;

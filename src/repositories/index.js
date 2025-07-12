@@ -1,3 +1,4 @@
 module.exports = {
-    LocationRepository: require('./location-repository')
+    LocationRepository: require('./location-repository'),
+    AuthRepository: require('./auth-repository')   
 }

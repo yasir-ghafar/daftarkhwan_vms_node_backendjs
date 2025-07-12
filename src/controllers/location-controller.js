@@ -44,9 +44,14 @@ async function getLocations(req, res) {
         .json(SuccessResponse)
     } catch(error) {
             ErrorResponse.error = error;
-            return res.status(StatusCodes.INTERNAL_SERVER_ERROR)
-            .json(ErrorResponse);
+            return res
+                .status(error.StatusCodes)
+                .json(ErrorResponse);
     }
+}
+
+async function getLocationById(req, res) {
+    
 }
 module.exports = {
     createLocation,

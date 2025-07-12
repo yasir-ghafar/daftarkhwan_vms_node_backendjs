@@ -1,4 +1,4 @@
 module.exports = {
-    MeetingRoomController: require('./meeting-room-controller'),
-    LocationController: require('./location-controller')
+    LocationController: require('./location-controller'),
+    AuthController: require('./auth-controller')
 }
