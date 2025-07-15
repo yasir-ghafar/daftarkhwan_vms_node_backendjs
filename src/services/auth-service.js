@@ -1,20 +1,31 @@
 const { StatusCodes } = require('http-status-codes');
+
+const argon2 = require('argon2');
+const jwt = require('jsonwebtoken')
+
 const { AuthRepository } = require('../repositories');
 const AppError = require('../utils/error/app-error');
 const { ErrorResponse } = require('../utils/common');
+const { ServerConfig } = require('../config');
+
 
 
 const authRepository = new AuthRepository();
 
 async function createUser(userData) {
     try {
-        const userExists = await authRepository.getByEmail(userData.email);
-         if (userExists) {
-            return new AppError('Cannot create a new User object', StatusCodes.INTERNAL_SERVER_ERROR);
-         } else {
-            const user = await authRepository.create(userData);
-            return user;
-         }
+        const hashedPassword = await hashPassword(userData.password);
+
+        const user = await authRepository.create({
+            ...userData,
+            password_hash: hashedPassword
+        });
+
+
+        const safeUser = { ...user.dataValues };
+        delete safeUser.password_hash;
+
+        return safeUser;
 
     } catch(error) {
         if (error.name == 'SequelizeValidationError') {
@@ -29,12 +40,46 @@ async function createUser(userData) {
     }
 }
 
-async function loginUser(userData) {
+async function checkUserAlreadyExists(email) {
+    console.log(`Checking Email: ${email}`)
+    const user = await authRepository.getByEmail(email);
+    if (user) 
+        return true;
+    else 
+        return false;
+}
+
+
+async function loginUser(email, password) {
     try {
-        console.log(userData);
-        const user = await authRepository.getByEmail(userData);
-        console.log(`getting user in crud repo ${user.name}`);
-        return user;
+        const user = await authRepository.getByEmail(email);
+        if (!user) {
+            throw new AppError('User Not Found!', 404);
+        }
+        
+        
+        console.log(password);
+        console.log(user.password_hash);
+        const isMatch = await comparePassword(user.password_hash, password);
+        
+        if (!isMatch) {
+            throw new AppError('Password is Incorrect', 400);
+        }
+
+
+        const token = issueToken({
+            id: user.id,
+            name: user.name,
+            email: user.email
+        })
+       
+        console.log(token);
+
+        const safeUser = { ...user.dataValues }
+        delete safeUser.password_hash;
+
+        return {...safeUser,
+             authorization: token};
     } catch(error) {
         if (error.name == 'SequelizeValidationError') {
             let explanation = [];
@@ -48,9 +93,42 @@ async function loginUser(userData) {
     }
 }
 
+
+async function hashPassword(password) {
+    return await  argon2.hash(password);
+}
+
+async function comparePassword(hashedPassword, password) {
+    try{
+        return await argon2.verify(hashedPassword, password);
+    } catch(error) {
+        console.log(`Error in comparing password: ${error}`)
+    }
+}
+
+// async function generateToken(id, name, email) {
+//     return await jwt.sign({id, name, email}, ServerConfig.JWT_SECRET, {
+//         expiresIn: "1h"
+//     });   
+// }
+
+// async function decodeToken(token) {
+//     return jwt.verify(token, ServerConfig.JWT_SECRET);
+// }
+
+
+function issueToken(payload) {
+  return jwt.sign(payload, ServerConfig.JWT_SECRET, { expiresIn: '1h' });
+}
+
+async function verifyToken(token) {
+  return await jwt.verify(token, ServerConfig.JWT_SECRET);
+}
 
 module.exports = {
     createUser,
-    loginUser
+    loginUser,
+    checkUserAlreadyExists,
+    verifyToken
     
 }
