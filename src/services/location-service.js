@@ -1,3 +1,4 @@
+const { StatusCodes } = require('http-status-codes');
 const { LocationRepository } = require('../repositories');
 const AppError = require('../utils/error/app-error')
 const locationRepository = new LocationRepository();
@@ -13,7 +14,7 @@ async function createLocation(data) {
                 explanation.push(err.message);
             });
             console.log(explanation);
-            throw new AppError('Cannot create a new Airplane object', StatusCodes.INTERNAL_SERVER_ERROR);
+            throw new AppError('Cannot create a new Location', StatusCodes.INTERNAL_SERVER_ERROR);
         }
         throw error;
     }
@@ -30,11 +31,10 @@ async function getLocationById(id) {
                 explanation.push(err.message);
             });
             console.log(explanation);
-            throw new AppError('Cannot create a new Airplane object', StatusCodes.INTERNAL_SERVER_ERROR);
+            throw new AppError('Unable to Fetch Locations', StatusCodes.INTERNAL_SERVER_ERROR);
         }
         throw error;
     }
-    
 }
 
 async function getAllLocations() {
@@ -48,7 +48,7 @@ async function getAllLocations() {
                 explanation.push(err.message);
             });
             console.log(explanation);
-            throw new AppError('Cannot create a new Airplane object', StatusCodes.INTERNAL_SERVER_ERROR);
+            throw new AppError('Unable to Fetch Location', StatusCodes.INTERNAL_SERVER_ERROR);
         }
         throw error;
     }

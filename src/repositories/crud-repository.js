@@ -23,7 +23,9 @@ class CrudRepository {
                     id: data
                 }
             });
+            console.log(`In Repository: ${response}`);
             return response;
+            
         } catch(error) {
             Logger.error('Something went wrong in the Crud Repo: destroy');
             throw error;
@@ -63,6 +65,8 @@ class CrudRepository {
             throw error;
         }
     }
+
+    
 
     async getByEmail(data) {
         try {

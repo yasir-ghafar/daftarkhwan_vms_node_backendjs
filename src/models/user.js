@@ -11,10 +11,14 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
+      User.hasOne(models.Wallet, { foreignKey: 'user_id' });
+      User.hasMany(models.Booking, { foreignKey: 'user_id' });
+      User.belongsTo(models.Company, { foreignKey: 'company_id' });
     }
   }
   User.init({
     name: DataTypes.STRING,
+    role: DataTypes.ENUM('admin', 'member'),
     email: DataTypes.STRING,
     password_hash: DataTypes.STRING,
     company_id: DataTypes.INTEGER,

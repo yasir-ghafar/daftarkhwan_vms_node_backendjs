@@ -8,14 +8,12 @@ const router = express.Router();
 
 router.post(
     '/',
-
     LocationMiddlewares.validateCreateLocationRequest,
     LocationController.createLocation);
 
 
-    router.get('/',
-        AuthMiddlewares.authenticateToken,
-        LocationController.getLocations);
+router.get('/',
+    LocationController.getLocations);
 
 
 module.exports = router;

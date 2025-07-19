@@ -4,8 +4,10 @@ const { SuccessResponse, ErrorResponse } = require('../utils/common');
 const { StatusCodes } = require('http-status-codes');
 
 async function registerUser(req, res) {
+    console.log('in Controller..')
     try {
-        if (req.body) {            
+        if (req.body) { 
+            console.log(req.body);           
             const user = await AuthService.createUser(req.body);
             SuccessResponse.data = user;
             return res.json(SuccessResponse);

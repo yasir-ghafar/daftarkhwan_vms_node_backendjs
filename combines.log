@@ -19,3 +19,14 @@
 2025-07-12 02:27:15: error: Somthing went wrong in Crud Repo: findOne
 2025-07-13 01:49:28: error: Something went wrong in the Crud Repo: create
 2025-07-15 01:41:48: error: Somthing went wrong in Crud Repo: findOne
+2025-07-17 00:19:47: error: Something went wrong in the Crud Repo: getAll
+2025-07-17 00:22:54: error: Something went wrong in the Crud Repo: getAll
+2025-07-17 00:24:12: error: Something went wrong in the Crud Repo: getAll
+2025-07-17 00:24:42: error: Something went wrong in the Crud Repo: getAll
+2025-07-17 00:25:52: error: Something went wrong in the Crud Repo: getAll
+2025-07-17 00:26:49: error: Somthing went wrong in Crud Repo: findOne
+2025-07-17 00:29:43: error: Somthing went wrong in Crud Repo: findOne
+2025-07-17 00:34:02: error: Somthing went wrong in Crud Repo: findOne
+2025-07-17 00:34:54: error: Somthing went wrong in Crud Repo: findOne
+2025-07-17 00:36:20: error: Something went wrong in the Crud Repo: getAll
+2025-07-19 15:02:55: error: Something went wrong in the Crud Repo: create

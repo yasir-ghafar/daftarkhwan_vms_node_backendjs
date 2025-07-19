@@ -30,6 +30,7 @@ async function checkIfUserExists(req, res, next) {
 
 
 async function authenticateToken(req, res, next) {
+    console.log('Authenticating..')
     const authHeader = req.headers['authorization']
     const token = authHeader?.split(' ')[1]; // Expect "Bearer <token>"
 

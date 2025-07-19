@@ -1,4 +1,5 @@
 const { StatusCodes } = require('http-status-codes');
+const { sequelize, Wallet } = require('../models');
 
 const argon2 = require('argon2');
 const jwt = require('jsonwebtoken')
@@ -13,14 +14,27 @@ const { ServerConfig } = require('../config');
 const authRepository = new AuthRepository();
 
 async function createUser(userData) {
+    const transaction = await sequelize.transaction();
     try {
+
         const hashedPassword = await hashPassword(userData.password);
+
 
         const user = await authRepository.create({
             ...userData,
             password_hash: hashedPassword
-        });
+        }, { transaction});
 
+        // if user rols is a member, create a wallet
+
+        if (user.role === 'member') {
+            await Wallet.create({
+                user_id: user.id,
+                balance: 50.00
+            }, { transaction });
+        }
+
+        await transaction.commit();
 
         const safeUser = { ...user.dataValues };
         delete safeUser.password_hash;
@@ -70,7 +84,8 @@ async function loginUser(email, password) {
         const token = issueToken({
             id: user.id,
             name: user.name,
-            email: user.email
+            email: user.email,
+            role: user.role
         })
        
         console.log(token);
@@ -81,11 +96,9 @@ async function loginUser(email, password) {
         return {...safeUser,
              authorization: token};
     } catch(error) {
+        await transaction.rollback();
         if (error.name == 'SequelizeValidationError') {
-            let explanation = [];
-            error.errors.array.array.forEach((err) => {
-                explanation.push(err.message);
-            });
+            let explanation = error.errors.map(err => err.message);
             console.log(explanation);
             throw new AppError('Cannot create a new User object', StatusCodes.INTERNAL_SERVER_ERROR);
         }
@@ -105,16 +118,6 @@ async function comparePassword(hashedPassword, password) {
         console.log(`Error in comparing password: ${error}`)
     }
 }
-
-// async function generateToken(id, name, email) {
-//     return await jwt.sign({id, name, email}, ServerConfig.JWT_SECRET, {
-//         expiresIn: "1h"
-//     });   
-// }
-
-// async function decodeToken(token) {
-//     return jwt.verify(token, ServerConfig.JWT_SECRET);
-// }
 
 
 function issueToken(payload) {
